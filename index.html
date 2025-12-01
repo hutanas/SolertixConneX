@@ -3,95 +3,261 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Microsoft Remote Support Portal</title>
+    <title>Remote Help - Microsoft Intune Support</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
+    <nav class="navbar">
         <div class="container">
-            <h1>🖥️ Microsoft Remote Support</h1>
-            <p>Get help from our technical support team</p>
+            <div class="nav-brand">
+                <h1>🔧 Remote Help</h1>
+                <span class="subtitle">Microsoft Intune Support</span>
+            </div>
+            <div class="nav-user" id="userInfo">
+                <span id="userName">Not signed in</span>
+                <button id="authBtn" class="btn-auth">Sign In</button>
+            </div>
         </div>
-    </header>
+    </nav>
 
     <main class="container">
-        <section class="support-form">
-            <h2>Request Remote Support</h2>
-            <form id="supportForm">
-                <div class="form-group">
-                    <label for="name">Full Name *</label>
-                    <input type="text" id="name" required>
+        <!-- Role Selection -->
+        <section class="role-selection" id="roleSelection">
+            <h2>Select Your Role</h2>
+            <div class="role-cards">
+                <div class="role-card" data-role="helper">
+                    <div class="role-icon">👨‍💻</div>
+                    <h3>Helper</h3>
+                    <p>Provide remote assistance to users</p>
+                    <ul>
+                        <li>View and control devices</li>
+                        <li>Run elevated privileges</li>
+                        <li>Access compliance status</li>
+                    </ul>
+                    <button class="btn-primary" onclick="selectRole('helper')">Continue as Helper</button>
                 </div>
-
-                <div class="form-group">
-                    <label for="email">Email Address *</label>
-                    <input type="email" id="email" required>
+                <div class="role-card" data-role="sharer">
+                    <div class="role-icon">👤</div>
+                    <h3>Sharer</h3>
+                    <p>Get help from IT support</p>
+                    <ul>
+                        <li>Share your screen</li>
+                        <li>Chat with support</li>
+                        <li>Grant control access</li>
+                    </ul>
+                    <button class="btn-primary" onclick="selectRole('sharer')">Continue as Sharer</button>
                 </div>
-
-                <div class="form-group">
-                    <label for="product">Microsoft Product *</label>
-                    <select id="product" required>
-                        <option value="">Select a product</option>
-                        <option value="windows">Windows 11/10</option>
-                        <option value="office">Microsoft 365 / Office</option>
-                        <option value="azure">Azure Services</option>
-                        <option value="teams">Microsoft Teams</option>
-                        <option value="edge">Microsoft Edge</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label for="issue">Issue Description *</label>
-                    <textarea id="issue" rows="5" required placeholder="Please describe your issue in detail..."></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label for="priority">Priority Level *</label>
-                    <select id="priority" required>
-                        <option value="">Select priority</option>
-                        <option value="low">Low - General inquiry</option>
-                        <option value="medium">Medium - Issue affecting work</option>
-                        <option value="high">High - Critical system down</option>
-                    </select>
-                </div>
-
-                <button type="submit" class="btn-primary">Submit Support Request</button>
-            </form>
-        </section>
-
-        <section class="ticket-status" id="ticketStatus" style="display: none;">
-            <h2>✅ Support Ticket Created</h2>
-            <div class="ticket-info">
-                <p><strong>Ticket ID:</strong> <span id="ticketId"></span></p>
-                <p><strong>Status:</strong> <span class="status-badge">Pending</span></p>
-                <p><strong>Estimated Response Time:</strong> <span id="responseTime"></span></p>
             </div>
-            <button onclick="location.reload()" class="btn-secondary">Submit Another Request</button>
         </section>
 
-        <section class="info-section">
-            <h2>How Remote Support Works</h2>
-            <div class="steps">
-                <div class="step">
-                    <div class="step-number">1</div>
-                    <h3>Submit Request</h3>
-                    <p>Fill out the support form with your issue details</p>
+        <!-- Helper Dashboard -->
+        <section class="helper-dashboard hidden" id="helperDashboard">
+            <h2>Helper Dashboard</h2>
+            
+            <div class="dashboard-stats">
+                <div class="stat-card">
+                    <h3>Active Sessions</h3>
+                    <p class="stat-number" id="activeSessions">0</p>
                 </div>
-                <div class="step">
-                    <div class="step-number">2</div>
-                    <h3>Get Ticket ID</h3>
-                    <p>Receive a unique ticket ID for tracking</p>
+                <div class="stat-card">
+                    <h3>Pending Requests</h3>
+                    <p class="stat-number" id="pendingRequests">3</p>
                 </div>
-                <div class="step">
-                    <div class="step-number">3</div>
-                    <h3>Agent Contact</h3>
-                    <p>Our support team will contact you via email</p>
+                <div class="stat-card">
+                    <h3>Today's Sessions</h3>
+                    <p class="stat-number" id="todaySessions">12</p>
                 </div>
-                <div class="step">
-                    <div class="step-number">4</div>
-                    <h3>Remote Session</h3>
-                    <p>Connect securely for remote assistance</p>
+            </div>
+
+            <div class="session-controls">
+                <h3>Start New Session</h3>
+                <div class="form-group">
+                    <label for="sessionCode">Enter Session Code</label>
+                    <input type="text" id="sessionCode" placeholder="Enter 8-digit code">
+                    <button class="btn-primary" onclick="startHelperSession()">Connect to User</button>
+                </div>
+            </div>
+
+            <div class="pending-requests">
+                <h3>Pending Support Requests</h3>
+                <div class="request-list" id="requestList">
+                    <!-- Requests will be populated here -->
+                </div>
+            </div>
+
+            <div class="session-history">
+                <h3>Recent Sessions</h3>
+                <table class="session-table">
+                    <thead>
+                        <tr>
+                            <th>Session ID</th>
+                            <th>User</th>
+                            <th>Device</th>
+                            <th>Duration</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sessionHistory">
+                        <!-- History will be populated here -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Sharer Interface -->
+        <section class="sharer-interface hidden" id="sharerInterface">
+            <h2>Request Remote Assistance</h2>
+            
+            <div class="device-info">
+                <h3>Device Information</h3>
+                <div class="info-grid">
+                    <div class="info-item">
+                        <span class="label">Device Name:</span>
+                        <span class="value" id="deviceName">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">OS Version:</span>
+                        <span class="value" id="osVersion">Loading...</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Compliance Status:</span>
+                        <span class="value" id="complianceStatus">
+                            <span class="badge badge-success">Compliant</span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Enrollment Status:</span>
+                        <span class="value" id="enrollmentStatus">Enrolled</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="session-request">
+                <h3>Generate Session Code</h3>
+                <p>Share this code with your IT support helper to start the session</p>
+                <div class="session-code-display">
+                    <div class="code-box" id="generatedCode">----</div>
+                    <button class="btn-primary" onclick="generateSessionCode()">Generate Code</button>
+                    <button class="btn-secondary" onclick="copySessionCode()">Copy Code</button>
+                </div>
+            </div>
+
+            <div class="session-controls-sharer hidden" id="sessionControlsSharer">
+                <h3>Active Session</h3>
+                <div class="active-session-info">
+                    <p><strong>Helper:</strong> <span id="helperName">John Doe</span></p>
+                    <p><strong>Session Duration:</strong> <span id="sessionDuration">00:00</span></p>
+                    <div class="control-buttons">
+                        <button class="btn-warning" onclick="pauseSession()">Pause Session</button>
+                        <button class="btn-danger" onclick="endSession()">End Session</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="permissions-panel">
+                <h3>Session Permissions</h3>
+                <div class="permission-item">
+                    <input type="checkbox" id="allowView" checked disabled>
+                    <label for="allowView">Allow helper to view my screen (Required)</label>
+                </div>
+                <div class="permission-item">
+                    <input type="checkbox" id="allowControl">
+                    <label for="allowControl">Allow helper to control my device</label>
+                </div>
+                <div class="permission-item">
+                    <input type="checkbox" id="allowElevation">
+                    <label for="allowElevation">Allow helper to run elevated commands</label>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Interface -->
+        <div class="chat-panel hidden" id="chatPanel">
+            <div class="chat-header">
+                <h3>Session Chat</h3>
+                <button class="btn-close" onclick="toggleChat()">×</button>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will appear here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="Type a message...">
+                <button onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+
+        <!-- Features Section -->
+        <section class="features-section">
+            <h2>Remote Help Capabilities</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🔐</div>
+                    <h3>Organization Login Required</h3>
+                    <p>Both helper and sharer must sign in with Microsoft Entra accounts from your organization [1][3]</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚠️</div>
+                    <h3>Compliance Warnings</h3>
+                    <p>Helpers see noncompliance warnings before connecting to devices not meeting policy requirements [1][7]</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎯</div>
+                    <h3>Role-Based Access Control</h3>
+                    <p>Admins can set RBAC rules to determine helper access scope and elevated privilege permissions [1][7]</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Session Monitoring</h3>
+                    <p>View reports with details about active and past sessions in the Microsoft Intune admin center [1][3]</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Web App Support</h3>
+                    <p>Sharers can use the web app when unable to install native applications for macOS or Windows [1]</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>Enhanced Chat</h3>
+                    <p>Continuous chat thread supporting special characters and multiple languages including Chinese and Arabic [1]</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Platform Support -->
+        <section class="platform-section">
+            <h2>Platform-Specific Features</h2>
+            <div class="platform-tabs">
+                <button class="tab-btn active" onclick="showPlatform('windows')">Windows</button>
+                <button class="tab-btn" onclick="showPlatform('macos')">macOS</button>
+                <button class="tab-btn" onclick="showPlatform('android')">Android</button>
+            </div>
+            <div class="platform-content">
+                <div class="platform-panel active" id="windows">
+                    <h3>Windows Capabilities</h3>
+                    <ul>
+                        <li><strong>Elevation:</strong> Helpers can enter UAC credentials when prompted on the sharer's device [1]</li>
+                        <li><strong>Remote Launch:</strong> Launch Remote Help from Intune by sending notifications to sharer's device [1]</li>
+                        <li><strong>Unenrolled Device Support:</strong> Optional support for devices not enrolled in Intune [1]</li>
+                        <li><strong>Conditional Access:</strong> Control access with MFA requirements and location restrictions [1]</li>
+                    </ul>
+                </div>
+                <div class="platform-panel" id="macos">
+                    <h3>macOS Capabilities</h3>
+                    <ul>
+                        <li><strong>Web App for Sharers:</strong> View-only capabilities when native app installation isn't possible [1]</li>
+                        <li><strong>Conditional Access Support:</strong> MFA and location-based access controls [1]</li>
+                        <li><strong>Enhanced Chat:</strong> Multi-language support with continuous message threading [1]</li>
+                        <li><strong>Unenrolled Device Support:</strong> Optional assistance for non-enrolled devices [1]</li>
+                    </ul>
+                </div>
+                <div class="platform-panel" id="android">
+                    <h3>Android Capabilities</h3>
+                    <ul>
+                        <li><strong>Unattended Access:</strong> Connect without sharer acceptance for fully managed devices [1]</li>
+                        <li><strong>Dedicated Device Support:</strong> Enhanced support for Android dedicated devices [1]</li>
+                        <li><strong>Enrollment Requirement:</strong> Devices must be enrolled in Intune as fully managed [1]</li>
+                    </ul>
                 </div>
             </div>
         </section>
@@ -99,10 +265,15 @@
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Microsoft Remote Support Demo | For Educational Purposes Only</p>
+            <p>&copy; 2024 Microsoft Remote Help Demo | Educational Purposes Only</p>
+            <p>Based on Microsoft Intune Remote Help architecture</p>
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <button class="chat-toggle" onclick="toggleChat()">💬</button>
+
+    <script src="auth.js"></script>
+    <script src="session.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
