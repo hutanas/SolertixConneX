@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Microsoft Remote Support Portal</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🖥️ Microsoft Remote Support</h1>
+            <p>Get help from our technical support team</p>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="support-form">
+            <h2>Request Remote Support</h2>
+            <form id="supportForm">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <input type="text" id="name" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="email">Email Address *</label>
+                    <input type="email" id="email" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="product">Microsoft Product *</label>
+                    <select id="product" required>
+                        <option value="">Select a product</option>
+                        <option value="windows">Windows 11/10</option>
+                        <option value="office">Microsoft 365 / Office</option>
+                        <option value="azure">Azure Services</option>
+                        <option value="teams">Microsoft Teams</option>
+                        <option value="edge">Microsoft Edge</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="issue">Issue Description *</label>
+                    <textarea id="issue" rows="5" required placeholder="Please describe your issue in detail..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="priority">Priority Level *</label>
+                    <select id="priority" required>
+                        <option value="">Select priority</option>
+                        <option value="low">Low - General inquiry</option>
+                        <option value="medium">Medium - Issue affecting work</option>
+                        <option value="high">High - Critical system down</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="btn-primary">Submit Support Request</button>
+            </form>
+        </section>
+
+        <section class="ticket-status" id="ticketStatus" style="display: none;">
+            <h2>✅ Support Ticket Created</h2>
+            <div class="ticket-info">
+                <p><strong>Ticket ID:</strong> <span id="ticketId"></span></p>
+                <p><strong>Status:</strong> <span class="status-badge">Pending</span></p>
+                <p><strong>Estimated Response Time:</strong> <span id="responseTime"></span></p>
+            </div>
+            <button onclick="location.reload()" class="btn-secondary">Submit Another Request</button>
+        </section>
+
+        <section class="info-section">
+            <h2>How Remote Support Works</h2>
+            <div class="steps">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Submit Request</h3>
+                    <p>Fill out the support form with your issue details</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Get Ticket ID</h3>
+                    <p>Receive a unique ticket ID for tracking</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Agent Contact</h3>
+                    <p>Our support team will contact you via email</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">4</div>
+                    <h3>Remote Session</h3>
+                    <p>Connect securely for remote assistance</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2024 Microsoft Remote Support Demo | For Educational Purposes Only</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
